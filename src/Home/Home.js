@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { signOut } from 'firebase/auth';
 import { toast } from 'react-toastify';
+import auth from '../firebase.init';
 import Task from '../Task/Task';
 
 const Home = () => {
+    const [user] = useAuthState(auth);
     const [tasks, setTasks] = useState([]);
     useEffect(() => {
         fetch('http://localhost:5000/tasks')
@@ -31,10 +35,19 @@ const Home = () => {
 
     }
 
+    const logout = () => {
+        signOut(auth);
+      };
+
     return (
         <div className='text-center'>
             <div>
+                <div className='flex justify-center gap-5 my-5'>
                 <h2 className='text-3xl text-center font-bold'>To-Do</h2>
+                {
+                    user ? <button onClick={logout} className='w-24  bg-red-600 rounded text-stone-100 font-medium p-2 hover:bg-red-700'>Sign Out</button> : ''
+                }
+                </div>
                 <form onSubmit={handleAddTask}>
                     <input className="shadow appearance-none border rounded py-2 px-3 w-6/12 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" id='task' name='task' placeholder='Task Name' required />
                     <br />
